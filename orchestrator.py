@@ -3,7 +3,7 @@ Orchestrator module to coordinate input, LLM call, and output.
 """
 
 from input_handler import get_input_prompt
-from llm_client import call_main_llm
+from utils.llm_client import call_main_llm
 from output_handler import print_model_output
 from utils.GeminiTokenCounter import GeminiTokenCounter
 
