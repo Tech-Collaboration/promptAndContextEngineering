@@ -5,7 +5,6 @@ Orchestrator module to coordinate input, LLM call, and output.
 from input_handler import get_input_prompt
 from utils.llm_client import call_main_llm
 from output_handler import print_model_output
-from utils.GeminiTokenCounter import GeminiTokenCounter
 
 # Ensure the project directory is on sys.path so local packages (like 'layers') can be imported
 import sys
@@ -17,10 +16,9 @@ if str(project_root) not in sys.path:
 from layers.prompt_compressing_layer import PromptCompressor
     
 def main():
-    compressor = PromptCompressor()     # instantiate class
     print("==> orchestrator.py started")
     print("==> main started")
-
+    compressor = PromptCompressor()     # instantiate class
     prompt = get_input_prompt()
     compressed_prompt_data = compressor.compress_prompt(prompt)
     output = call_main_llm(compressed_prompt_data["compressed_prompt"])

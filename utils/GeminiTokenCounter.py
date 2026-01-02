@@ -44,10 +44,10 @@ class GeminiTokenCounter:
     # -------------------------------
     # Text token count
     # -------------------------------
-    def count_text(self, text: str):
+    def count_text(self, text: str, operation: str):
         total = self.model.count_tokens(text)
-        print("\n=== Text Token Count ===")
-        print(f"Text: {text[:80]}{'...' if len(text) > 80 else ''}")
+        print(f"\n=== Text Token Count for ({operation}) ===")
+        print(f"Text: {text}")
         print(f"Total tokens: {total.total_tokens}")
         return total.total_tokens
 
