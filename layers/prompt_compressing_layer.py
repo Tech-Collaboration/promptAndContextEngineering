@@ -7,6 +7,7 @@ import datetime
 from compressors.rule_based_compression_layer import RuleBasedCompressor
 from compressors.llm_compression import LLMCompressor
 from compressors.lingua_compression_layer import LinguaCompressor
+from utils import conditionUtil
 from utils.GeminiTokenCounter import GeminiTokenCounter
 
 print(">>> prompt_compressing_layer.py file loaded")
