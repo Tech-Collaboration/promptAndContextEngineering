@@ -7,8 +7,9 @@ import datetime
 from compressors.rule_based_compression_layer import RuleBasedCompressor
 from compressors.llm_compression import LLMCompressor
 from compressors.lingua_compression_layer import LinguaCompressor
-from utils import conditionUtil
 from utils.GeminiTokenCounter import GeminiTokenCounter
+from evaluation.result import CompressionResult
+from evaluation.similarity import semantic_similarity
 
 print(">>> prompt_compressing_layer.py file loaded")
 
@@ -39,7 +40,7 @@ class PromptCompressor:
         return self.counter.count_text(text, operation=label) if self.show_tokens else 0
 
 
-    def compress_prompt(self, prompt_text: str):
+    def compress_prompt(self, prompt_text: str) -> CompressionResult:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         print("\n🔹 Starting Compression Pipeline 🔹")
@@ -57,21 +58,29 @@ class PromptCompressor:
 
         # Stage 4 – Optional LLM rewrite
         if self.use_llm:
-            compressed_output = self.llm.compress(lingua_output)
+            final_output = self.llm.compress(lingua_output)
         else:
-            compressed_output = lingua_output
+            final_output = lingua_output
 
-        tokens_after = self._count_tokens(compressed_output, "after compression")
+        tokens_after_final = self._count_tokens(final_output, "after compression")
 
-        # Summary
-        savings = round(((tokens_before - tokens_after) / tokens_before) * 100, 2)
-        print(f"\n [PromptCompressor] Token reduction: {tokens_before} → {tokens_after} ({savings}% saved)\n")
+        savings = round(((tokens_before - tokens_after_final) / tokens_before) * 100, 2)
 
-        return {
-            "timestamp": timestamp,
-            "original_prompt": prompt_text,
-            "compressed_prompt": compressed_output,
-            "tokens_before": tokens_before,
-            "tokens_after": tokens_after,
-            "savings_pct": savings,
-        }
+        input_sim = semantic_similarity(prompt_text, final_output)
+
+        print(f"\n [PromptCompressor] Token reduction: {tokens_before} → {tokens_after_final} ({savings}% saved)\n")
+
+        return CompressionResult(
+            timestamp=timestamp,
+            original_prompt=prompt_text,
+            rule_output=rule_output,
+            lingua_output=lingua_output,
+            final_output=final_output,
+            tokens_before=tokens_before,
+            tokens_after_rule=tokens_after_rule,
+            tokens_after_lingua=tokens_after_lingua,
+            tokens_after_final=tokens_after_final,
+            used_llm=self.use_llm,
+            savings_pct=savings,
+            input_similarity=input_sim,
+        )
