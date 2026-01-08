@@ -12,7 +12,7 @@ from utils.GeminiTokenCounter import GeminiTokenCounter
 print(">>> lingua_compression_layer.py file loaded")
 
 class LinguaCompressor:
-    def __init__(self, model_name: str = "microsoft/phi-1", ratio: float = 0.5):
+    def __init__(self, model_name: str = "TinyLlama/TinyLlama-1.1B-Chat-v1.0", ratio: float = 0.5):
         self.model_name = model_name
         self.ratio = ratio
         self.available = False
@@ -27,7 +27,10 @@ class LinguaCompressor:
             self.compressor = PromptCompressor(
                 model_name=self.model_name,
                 device_map="cpu",
-                model_config={"torch_dtype": "float32"}
+                model_config={
+                                "torch_dtype": "float32",
+                                "low_cpu_mem_usage": True
+            }
             )
             self.available = True
             print(f"[Lingua] Ready (target ratio={self.ratio})")
