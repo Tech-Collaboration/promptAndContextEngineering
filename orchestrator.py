@@ -56,7 +56,7 @@ def choose_prompt(prompts: dict) -> list[str]:
 
 def main():
     print("==> orchestrator.py started")
-    compressor = PromptCompressor(use_llm=False)
+    compressor = PromptCompressor(use_llm=True)
 
     prompts = load_prompts(PROMPT_FILE)
     print(f"Loaded {len(prompts)} prompts.")

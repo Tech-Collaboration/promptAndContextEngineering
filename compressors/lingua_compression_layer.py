@@ -8,7 +8,7 @@ of the prompt based on model scoring.
 
 import sys
 from llmlingua import PromptCompressor
-
+from utils.GeminiTokenCounter import GeminiTokenCounter
 print(">>> lingua_compression_layer.py file loaded")
 
 class LinguaCompressor:
@@ -17,6 +17,7 @@ class LinguaCompressor:
         self.ratio = ratio
         self.available = False
         self.compressor = None
+        self.counter = GeminiTokenCounter()
 
     def _load(self):
         if self.compressor:
@@ -47,9 +48,9 @@ class LinguaCompressor:
             else:
                 compressed = compressed_result
 
-            before = len(text.split())
-            after = len(compressed.split())
-            print(f"[Lingua] Compressed {before} → {after} words ({round((before - after) / before * 100, 2)}% saved)")
+            before = self.counter.count_text(text, ("before Lingua compression"))
+            after = self.counter.count_text(compressed, ("after Lingua compression"))
+            print(f"[Lingua] Compressed {before} → {after} tokens ({round((before - after) / before * 100, 2)}% saved)")
             return compressed
         except Exception as e:
             print(f"[Lingua] Error during compression: {e}", file=sys.stderr)
